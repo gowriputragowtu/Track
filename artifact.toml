@@ -1,32 +1,31 @@
-kind = "api"
-previewPath = "/api" # TODO - should be excluded from preview in the first place
-title = "API Server"
+kind = "web"
+previewPath = "/"
+title = "Income & Expense Tracker"
 version = "1.0.0"
-id = "3B4_FFSkEVBkAeYMFRJ2e"
+id = "artifacts/finance-tracker"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
 
 [[services]]
-localPort = 8080
-name = "API Server"
-paths = ["/api"]
+name = "web"
+paths = [ "/" ]
+localPort = 19051
 
 [services.development]
-run = "pnpm --filter @workspace/api-server run dev"
+run = "pnpm --filter @workspace/finance-tracker run dev"
 
 [services.production]
+build = [ "pnpm", "--filter", "@workspace/finance-tracker", "run", "build" ]
+publicDir = "artifacts/finance-tracker/dist/public"
+serve = "static"
 
-[services.production.build]
-args = ["pnpm", "--filter", "@workspace/api-server", "run", "build"]
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
 
-[services.production.build.env]
-NODE_ENV = "production"
-
-[services.production.run]
-# we don't run through pnpm to make startup faster in production
-args = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
-
-[services.production.run.env]
-PORT = "8080"
-NODE_ENV = "production"
-
-[services.production.health.startup]
-path = "/api/healthz"
+[services.env]
+PORT = "19051"
+BASE_PATH = "/"
